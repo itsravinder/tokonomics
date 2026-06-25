@@ -1,5 +1,5 @@
-"""
-TokenScope server - a local web UI for Claude token economics.
+﻿"""
+Tokonomics server - a local web UI for Claude token economics.
 
 A thin UI layer on top of two existing tools:
   - rtk (https://github.com/rtk-ai/rtk)       - token savings
@@ -8,10 +8,10 @@ A thin UI layer on top of two existing tools:
 Stdlib only. No pip installs for the server itself.
 
 Usage:
-    python -m tokenscope                  # serve on http://127.0.0.1:8765
-    python -m tokenscope --port 9000
-    python -m tokenscope --price 3.5      # USD per 1M saved tokens
-    python -m tokenscope --rtk /path/rtk  # override rtk location
+    python -m tokonomics                  # serve on http://127.0.0.1:8765
+    python -m tokonomics --port 9000
+    python -m tokonomics --price 3.5      # USD per 1M saved tokens
+    python -m tokonomics --rtk /path/rtk  # override rtk location
 """
 
 from __future__ import annotations
@@ -51,8 +51,8 @@ def resolve_rtk(override: str | None) -> str:
     candidates = []
     if override:
         candidates.append(override)
-    if os.environ.get("TOKENSCOPE_RTK"):
-        candidates.append(os.environ["TOKENSCOPE_RTK"])
+    if os.environ.get("TOKONOMICS_RTK"):
+        candidates.append(os.environ["TOKONOMICS_RTK"])
     for c in candidates:
         if Path(c).exists():
             return str(Path(c).resolve())
@@ -149,7 +149,7 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(prog="tokenscope", description="Local Claude token-economics dashboard")
+    ap = argparse.ArgumentParser(prog="tokonomics", description="Local Claude token-economics dashboard")
     ap.add_argument("--port", type=int, default=DEFAULT_PORT)
     ap.add_argument("--price", type=float, default=DEFAULT_PRICE_PER_MTOK, help="USD per 1,000,000 saved tokens")
     ap.add_argument("--rtk", default=None, help="path to rtk executable (auto-detected if omitted)")
@@ -162,7 +162,7 @@ def main(argv: list[str] | None = None) -> int:
     url = f"http://127.0.0.1:{args.port}/"
     rtk_ok = "found" if Path(CONFIG["rtk_path"]).exists() else "NOT found - run scripts/install-rtk"
     ccu_ok = "found" if economics.ccusage_available() else "NOT found - npm i -g ccusage"
-    print(f"TokenScope serving at {url}")
+    print(f"Tokonomics serving at {url}")
     print(f"  rtk:     {CONFIG['rtk_path']} [{rtk_ok}]")
     print(f"  ccusage: [{ccu_ok}]")
     print(f"  price:   ${args.price:.2f} per 1M saved tokens")

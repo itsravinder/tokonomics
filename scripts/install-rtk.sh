@@ -1,10 +1,10 @@
-#!/usr/bin/env bash
-# Downloads the official rtk binary into tokenscope/bin/ for macOS or Linux.
+﻿#!/usr/bin/env bash
+# Downloads the official rtk binary into tokonomics/bin/ for macOS or Linux.
 # rtk is licensed Apache-2.0 (https://github.com/rtk-ai/rtk).
 set -euo pipefail
 
 root="$(cd "$(dirname "$0")/.." && pwd)"
-bindir="$root/tokenscope/bin"
+bindir="$root/tokonomics/bin"
 mkdir -p "$bindir"
 
 os="$(uname -s)"

@@ -1,6 +1,6 @@
-# Third-party notices
+﻿# Third-party notices
 
-TokenScope is an independent UI layer. It calls the tools below as external
+Tokonomics is an independent UI layer. It calls the tools below as external
 programs (subprocesses) and does not copy or modify their source code. Their
 licenses are reproduced/linked here as attribution.
 
@@ -29,7 +29,7 @@ licenses are reproduced/linked here as attribution.
 - Project: https://github.com/chartjs/Chart.js
 - License: MIT License
 - Role: renders the spend-vs-savings chart.
-- Distribution: bundled as `tokenscope/web/chart.umd.min.js`. The MIT license
+- Distribution: bundled as `tokonomics/web/chart.umd.min.js`. The MIT license
   permits redistribution provided this notice is retained.
 
 ---

@@ -1,5 +1,5 @@
-# rtk binary is not redistributed - users install it via scripts/install-rtk
-tokenscope/bin/
+﻿# rtk binary is not redistributed - users install it via scripts/install-rtk
+tokonomics/bin/
 
 # Python
 __pycache__/

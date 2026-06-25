@@ -1,10 +1,10 @@
-# TokenScope
+﻿# Tokonomics
 
 A local web dashboard for **Claude token economics** on Windows (also macOS/Linux):
 how many sessions you ran, how much you spent, how many tokens `rtk` saved, a
 per-session **health score**, and concrete **opportunities** to save more.
 
-> TokenScope is a **UI layer** built on top of two existing open-source tools:
+> Tokonomics is a **UI layer** built on top of two existing open-source tools:
 > [**rtk**](https://github.com/rtk-ai/rtk) (token-savings engine) and
 > [**ccusage**](https://github.com/ryoppippi/ccusage) (Claude usage and spend).
 > It calls them as external programs and visualizes the result. It does not copy
@@ -41,14 +41,14 @@ The server is **Python standard library only** - no pip dependencies.
    - `ccusage` (for spend/usage): `npm i -g ccusage`
 2. **Run**
    ```sh
-   python -m tokenscope
+   python -m tokonomics
    ```
    Open http://127.0.0.1:8765/
 
 Optional install as a command:
 ```sh
 pip install -e .
-tokenscope --port 9000 --price 3.5
+tokonomics --port 9000 --price 3.5
 ```
 
 ### Options
@@ -64,8 +64,8 @@ real history.
 
 ## Auto-detection
 
-- **rtk** is resolved in this order: `--rtk` flag -> `TOKENSCOPE_RTK` env var ->
-  `rtk` on `PATH` -> bundled `tokenscope/bin/`.
+- **rtk** is resolved in this order: `--rtk` flag -> `TOKONOMICS_RTK` env var ->
+  `rtk` on `PATH` -> bundled `tokonomics/bin/`.
 - **ccusage** is resolved from `PATH`. If missing, usage/spend fall back to mock
   while rtk savings still work.
 
@@ -87,7 +87,7 @@ pair this with the [caveman](https://github.com/JuliusBrussee/caveman) skill.
 
 ## License
 
-TokenScope is released under the [MIT License](LICENSE).
+Tokonomics is released under the [MIT License](LICENSE).
 Third-party tools retain their own licenses - see
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
