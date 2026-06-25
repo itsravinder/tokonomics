@@ -1,0 +1,14 @@
+TokenScope
+Copyright (c) 2026 itsravinder
+
+This product is a UI layer built on top of independent open-source tools that
+it invokes as external programs. TokenScope does not modify or include their
+source code. See THIRD_PARTY_NOTICES.md for full attributions and licenses.
+
+Invoked tools (not redistributed by this repository):
+  - rtk      - Apache License 2.0 - https://github.com/rtk-ai/rtk
+  - ccusage  - MIT License        - https://github.com/ryoppippi/ccusage
+
+Bundled third-party assets (redistributed in this repository):
+  - Chart.js - MIT License        - https://github.com/chartjs/Chart.js
+                                     tokenscope/web/chart.umd.min.js

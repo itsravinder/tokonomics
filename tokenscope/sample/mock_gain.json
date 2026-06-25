@@ -1,0 +1,30 @@
+{
+  "summary": {
+    "total_commands": 412,
+    "total_input": 66800000,
+    "total_output": 36740000,
+    "total_saved": 30060000,
+    "avg_savings_pct": 45.0,
+    "total_time_ms": 1840000,
+    "avg_time_ms": 79
+  },
+  "daily": [
+    { "date": "2026-06-16", "commands": 18, "input_tokens": 1300000, "output_tokens": 780000, "saved_tokens": 520000, "savings_pct": 40.0, "total_time_ms": 1400, "avg_time_ms": 78 },
+    { "date": "2026-06-17", "commands": 22, "input_tokens": 1600000, "output_tokens": 880000, "saved_tokens": 720000, "savings_pct": 45.0, "total_time_ms": 1720, "avg_time_ms": 78 },
+    { "date": "2026-06-18", "commands": 31, "input_tokens": 2300000, "output_tokens": 1265000, "saved_tokens": 1035000, "savings_pct": 45.0, "total_time_ms": 2400, "avg_time_ms": 77 },
+    { "date": "2026-06-19", "commands": 24, "input_tokens": 1800000, "output_tokens": 1080000, "saved_tokens": 720000, "savings_pct": 40.0, "total_time_ms": 1900, "avg_time_ms": 79 },
+    { "date": "2026-06-20", "commands": 38, "input_tokens": 2900000, "output_tokens": 1450000, "saved_tokens": 1450000, "savings_pct": 50.0, "total_time_ms": 3000, "avg_time_ms": 79 },
+    { "date": "2026-06-21", "commands": 41, "input_tokens": 3100000, "output_tokens": 1550000, "saved_tokens": 1550000, "savings_pct": 50.0, "total_time_ms": 3200, "avg_time_ms": 78 },
+    { "date": "2026-06-22", "commands": 29, "input_tokens": 2200000, "output_tokens": 1210000, "saved_tokens": 990000, "savings_pct": 45.0, "total_time_ms": 2300, "avg_time_ms": 79 },
+    { "date": "2026-06-23", "commands": 67, "input_tokens": 5100000, "output_tokens": 2805000, "saved_tokens": 2295000, "savings_pct": 45.0, "total_time_ms": 5300, "avg_time_ms": 79 },
+    { "date": "2026-06-24", "commands": 12, "input_tokens": 900000, "output_tokens": 495000, "saved_tokens": 405000, "savings_pct": 45.0, "total_time_ms": 950, "avg_time_ms": 79 }
+  ],
+  "weekly": [
+    { "week_start": "2026-06-15", "week_end": "2026-06-21", "commands": 154, "input_tokens": 11000000, "output_tokens": 6005000, "saved_tokens": 4995000, "savings_pct": 45.4, "total_time_ms": 12220, "avg_time_ms": 79 },
+    { "week_start": "2026-06-22", "week_end": "2026-06-28", "commands": 108, "input_tokens": 8200000, "output_tokens": 4510000, "saved_tokens": 3690000, "savings_pct": 45.0, "total_time_ms": 8550, "avg_time_ms": 79 }
+  ],
+  "monthly": [
+    { "month": "2026-05", "commands": 150, "input_tokens": 47600000, "output_tokens": 26225000, "saved_tokens": 21375000, "savings_pct": 44.9, "total_time_ms": 1019230, "avg_time_ms": 80 },
+    { "month": "2026-06", "commands": 262, "input_tokens": 19200000, "output_tokens": 10515000, "saved_tokens": 8685000, "savings_pct": 45.2, "total_time_ms": 820770, "avg_time_ms": 78 }
+  ]
+}

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TokenScope - Claude token economics</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="logo" title="TokenScope">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="3" width="42" height="42" rx="12" fill="#4f46e5"/>
+          <rect x="12" y="26" width="6" height="11" rx="2" fill="#a5b4fc"/>
+          <rect x="21" y="19" width="6" height="18" rx="2" fill="#e0e7ff"/>
+          <rect x="30" y="12" width="6" height="25" rx="2" fill="#38bdf8"/>
+        </svg>
+      </div>
+      <nav class="nav">
+        <div class="nav-item active"><span class="ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        </span>Overview</div>
+        <div class="nav-item"><span class="ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>
+        </span>Optimize</div>
+        <div class="nav-item"><span class="ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M3 12h4l2 6 4-14 2 8h6"/></svg>
+        </span>Pulse</div>
+        <div class="nav-item"><span class="ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        </span>History</div>
+      </nav>
+      <div class="bottom">
+        <div class="upgrade">Upgrade</div>
+        <div class="nav-item"><span class="ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3"/><circle cx="4" cy="12" r="2"/><circle cx="12" cy="6" r="2"/><circle cx="20" cy="14" r="2"/></svg>
+        </span>Settings</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="status" id="status">
+        <span class="dot"></span>
+        <span id="statusText">Loading Claude token economics...</span>
+        <span class="meta" id="scanMeta"></span>
+        <span class="src" id="srcBadge"></span>
+      </div>
+
+      <section class="cards4">
+        <div class="card health">
+          <div class="label">Session health</div>
+          <div class="ring-wrap">
+            <svg class="ring" viewBox="0 0 120 120">
+              <circle class="ring-bg" cx="60" cy="60" r="52"></circle>
+              <circle class="ring-fg" id="ringFg" cx="60" cy="60" r="52"></circle>
+            </svg>
+            <div class="ring-center"><span id="healthScore">0</span><small>/ 100</small></div>
+          </div>
+          <div class="health-legend">
+            <span><i class="d-quality"></i>Quality <b id="hQuality">0%</b></span>
+            <span><i class="d-savings"></i>Adoption <b id="hAdoption">0%</b></span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5a8 3 0 0 0 16 0M4 5a8 3 0 0 1 16 0v14a8 3 0 0 1-16 0z"/><path d="M4 12a8 3 0 0 0 16 0"/></svg>
+            Claude usage
+          </div>
+          <div class="value" id="sessions">0</div>
+          <div class="value-sub" id="consumed">0 tokens</div>
+          <div class="value-spent">$<span id="spend">0</span> spent</div>
+        </div>
+
+        <div class="card">
+          <div class="label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l7 7 4-4 7 7"/><path d="M21 13v4h-4"/></svg>
+            Saved by rtk
+          </div>
+          <div class="value pos" id="savedTokens">0</div>
+          <div class="value-sub"><span id="savedUsd">$0</span> &middot; <span id="savedPct">0%</span> avg</div>
+        </div>
+
+        <div class="card potential">
+          <div class="label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10"/><path d="M8 7l4-4 4 4"/><path d="M5 21h14"/></svg>
+            Untapped potential
+          </div>
+          <div class="value warn" id="potentialUsd">$0</div>
+          <div class="value-sub" id="potentialTokens">0 tokens unsaved</div>
+        </div>
+      </section>
+
+      <section class="history">
+        <div class="history-head">
+          <h2>Spend vs savings</h2>
+          <div class="controls">
+            <div class="seg" id="seg">
+              <button data-p="daily" class="active">day</button>
+              <button data-p="weekly">week</button>
+              <button data-p="monthly">month</button>
+            </div>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="chart"></canvas></div>
+        <div class="note" id="note"></div>
+      </section>
+
+      <section class="panels">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Top opportunities</h3>
+            <span class="hint">route these through rtk to save more</span>
+          </div>
+          <div class="rows" id="opps"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Sessions</h3>
+            <span class="hint">health = quality + rtk adoption</span>
+          </div>
+          <div class="rows" id="sessRows"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/chart.umd.min.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

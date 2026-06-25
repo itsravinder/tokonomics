@@ -1,0 +1,17 @@
+# rtk binary is not redistributed - users install it via scripts/install-rtk
+tokenscope/bin/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

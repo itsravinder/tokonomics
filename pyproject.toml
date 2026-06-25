@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tokenscope"
+version = "0.1.0"
+description = "Local web UI for Claude token economics - spend, savings, and health - built on rtk + ccusage."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "itsravinder" }]
+keywords = ["claude", "llm", "tokens", "rtk", "ccusage", "dashboard", "cost"]
+dependencies = []  # server is Python stdlib only
+
+[project.urls]
+Homepage = "https://github.com/itsravinder/tokenscope"
+Issues = "https://github.com/itsravinder/tokenscope/issues"
+
+[project.scripts]
+tokenscope = "tokenscope.server:main"
+
+[tool.setuptools]
+packages = ["tokenscope"]
+
+[tool.setuptools.package-data]
+tokenscope = ["web/*", "sample/*"]
