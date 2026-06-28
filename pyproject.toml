@@ -1,4 +1,4 @@
-﻿[build-system]
+[build-system]
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
@@ -11,7 +11,12 @@ requires-python = ">=3.9"
 license = { text = "MIT" }
 authors = [{ name = "itsravinder" }]
 keywords = ["claude", "llm", "tokens", "rtk", "ccusage", "dashboard", "cost"]
-dependencies = []  # server is Python stdlib only
+dependencies = []  # dashboard server is Python stdlib only
+
+[project.optional-dependencies]
+# The optional active proxy may use these; both are imported lazily so the
+# dashboard still runs without them. Install with: pip install -e .[proxy]
+proxy = ["markitdown", "tiktoken"]
 
 [project.urls]
 Homepage = "https://github.com/itsravinder/tokonomics"

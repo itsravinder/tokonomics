@@ -32,6 +32,23 @@ licenses are reproduced/linked here as attribution.
 - Distribution: bundled as `tokonomics/web/chart.umd.min.js`. The MIT license
   permits redistribution provided this notice is retained.
 
+## markitdown
+
+- Project: https://github.com/microsoft/markitdown
+- License: MIT License
+- Role: optional proxy pipeline stage - converts document attachments
+  (PDF/Office) to clean markdown before they reach the model.
+- Distribution: NOT bundled. Installed on demand via `pip install -e .[proxy]`.
+
+## tiktoken
+
+- Project: https://github.com/openai/tiktoken
+- License: MIT License
+- Role: optional token estimator for the proxy's before/after comparison. Used
+  only as a consistent local approximation (not Anthropic's exact tokenizer);
+  the app falls back to a chars/4 estimate when it is absent.
+- Distribution: NOT bundled. Installed on demand via `pip install -e .[proxy]`.
+
 ---
 
 These notices satisfy attribution requirements but are not legal advice. If you

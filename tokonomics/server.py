@@ -26,6 +26,7 @@ from pathlib import Path
 from urllib.parse import urlparse, parse_qs
 
 from . import economics
+from . import proxy
 
 BASE_DIR = Path(__file__).resolve().parent
 WEB_DIR = BASE_DIR / "web"
@@ -117,7 +118,12 @@ class Handler(BaseHTTPRequestHandler):
                 self._send_json(payload)
                 return
             try:
-                payload = economics.assemble(CONFIG["rtk_path"], CONFIG["price_per_mtok"])
+                opt_pct = 0.0
+                try:
+                    opt_pct = float(proxy.stats(CONFIG["price_per_mtok"]).get("saved_pct") or 0.0)
+                except Exception:  # noqa: BLE001
+                    opt_pct = 0.0
+                payload = economics.assemble(CONFIG["rtk_path"], CONFIG["price_per_mtok"], optimization_pct=opt_pct)
             except Exception as exc:  # noqa: BLE001
                 payload = load_json(MOCK_ECON_FILE)
                 payload["source"] = "mock"
@@ -145,7 +151,85 @@ class Handler(BaseHTTPRequestHandler):
             })
             return
 
+        if path == "/api/insights":
+            try:
+                data = economics.insights(CONFIG["rtk_path"], CONFIG["price_per_mtok"])
+                ps, pst = proxy.status(), proxy.stats(CONFIG["price_per_mtok"])
+                signals = {
+                    "running": ps.get("running"),
+                    "passthrough": (ps.get("config") or {}).get("passthrough", False),
+                    "requests": pst.get("requests", 0),
+                    "saved_pct": pst.get("saved_pct", 0),
+                    "cache_hit_pct": pst.get("cache_hit_pct", 0),
+                }
+                data["recommendations"] = economics.build_recommendations(data, signals)
+                self._send_json(data)
+            except Exception as exc:  # noqa: BLE001
+                self._send_json({"source": "error", "errors": {"insights": str(exc)},
+                                 "projects": [], "files": [], "commands": [], "tools": [],
+                                 "recommendations": [], "totals": {}, "price_per_mtok": CONFIG["price_per_mtok"]})
+            return
+
+        if path == "/api/proxy/status":
+            self._send_json(proxy.status())
+            return
+
+        if path == "/api/proxy/stats":
+            self._send_json(proxy.stats(CONFIG["price_per_mtok"]))
+            return
+
+        if path == "/api/proxy/setup":
+            self._send_json(_setup_commands(proxy.STATE["port"]))
+            return
+
         self._send_static(path)
+
+    def _read_json_body(self) -> dict:
+        length = int(self.headers.get("Content-Length") or 0)
+        if not length:
+            return {}
+        try:
+            return json.loads(self.rfile.read(length) or b"{}")
+        except (ValueError, TypeError):
+            return {}
+
+    def do_POST(self):  # noqa: N802
+        path = urlparse(self.path).path
+
+        if path == "/api/proxy/start":
+            proxy.start(
+                rtk_path=CONFIG["rtk_path"],
+                price_per_mtok=CONFIG["price_per_mtok"],
+            )
+            self._send_json(proxy.status())
+            return
+
+        if path == "/api/proxy/stop":
+            proxy.stop()
+            self._send_json(proxy.status())
+            return
+
+        if path == "/api/proxy/config":
+            patch = self._read_json_body()
+            allowed = {k: patch[k] for k in ("passthrough", "rtk", "markitdown", "prompt", "truncate") if k in patch}
+            self._send_json(proxy.set_config(allowed))
+            return
+
+        self.send_error(404, "not found")
+
+
+def _setup_commands(port: int) -> dict:
+    """Exact shell commands to attach/detach Claude Code via ANTHROPIC_BASE_URL."""
+    base = f"http://127.0.0.1:{port}"
+    return {
+        "base_url": base,
+        "windows_persist": f'setx ANTHROPIC_BASE_URL "{base}"',
+        "windows_session": f'$env:ANTHROPIC_BASE_URL = "{base}"',
+        "unix_session": f'export ANTHROPIC_BASE_URL="{base}"',
+        "windows_unset": 'setx ANTHROPIC_BASE_URL ""',
+        "unix_unset": "unset ANTHROPIC_BASE_URL",
+        "note": "Set it, then start Claude Code in that shell. Requests now route through Tokonomics.",
+    }
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -153,15 +237,40 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--port", type=int, default=DEFAULT_PORT)
     ap.add_argument("--price", type=float, default=DEFAULT_PRICE_PER_MTOK, help="USD per 1,000,000 saved tokens")
     ap.add_argument("--rtk", default=None, help="path to rtk executable (auto-detected if omitted)")
+    ap.add_argument("--proxy-port", type=int, default=proxy.DEFAULT_PROXY_PORT, help="port for the optimization proxy")
+    ap.add_argument("--upstream", default=proxy.DEFAULT_UPSTREAM, help="upstream Anthropic API base URL")
+    ap.add_argument("--no-proxy", action="store_true", help="start the dashboard only; do not launch the proxy")
+    ap.add_argument("--proxy-only", action="store_true", help="start the proxy only; no dashboard")
     args = ap.parse_args(argv)
 
     CONFIG["price_per_mtok"] = args.price
     CONFIG["rtk_path"] = resolve_rtk(args.rtk)
+    proxy.STATE["port"] = args.proxy_port
+    proxy.STATE["upstream"] = args.upstream
+    proxy.STATE["price_per_mtok"] = args.price
+
+    rtk_ok = "found" if Path(CONFIG["rtk_path"]).exists() else "NOT found - run scripts/install-rtk"
+    ccu_ok = "found" if economics.ccusage_available() else "NOT found - npm i -g ccusage"
+
+    if not args.no_proxy:
+        proxy.start(rtk_path=CONFIG["rtk_path"], price_per_mtok=args.price)
+        print(f"Proxy listening on http://127.0.0.1:{args.proxy_port} -> {args.upstream}")
+        print(f"  Route Claude Code through it:  setx ANTHROPIC_BASE_URL \"http://127.0.0.1:{args.proxy_port}\"")
+        print(f"  tiktoken estimator: [{'on' if proxy.status()['tiktoken'] else 'off - using chars/4'}]")
+
+    if args.proxy_only:
+        print("  proxy-only mode; Ctrl+C to stop")
+        try:
+            while True:
+                __import__("time").sleep(3600)
+        except KeyboardInterrupt:
+            print("\nstopped")
+        finally:
+            proxy.stop()
+        return 0
 
     httpd = ThreadingHTTPServer(("127.0.0.1", args.port), Handler)
     url = f"http://127.0.0.1:{args.port}/"
-    rtk_ok = "found" if Path(CONFIG["rtk_path"]).exists() else "NOT found - run scripts/install-rtk"
-    ccu_ok = "found" if economics.ccusage_available() else "NOT found - npm i -g ccusage"
     print(f"Tokonomics serving at {url}")
     print(f"  rtk:     {CONFIG['rtk_path']} [{rtk_ok}]")
     print(f"  ccusage: [{ccu_ok}]")
@@ -173,4 +282,5 @@ def main(argv: list[str] | None = None) -> int:
         print("\nstopped")
     finally:
         httpd.server_close()
+        proxy.stop()
     return 0

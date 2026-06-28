@@ -1,5 +1,12 @@
-﻿# rtk binary is not redistributed - users install it via scripts/install-rtk
+# rtk binary is not redistributed - users install it via scripts/install-rtk
 tokonomics/bin/
+
+# Claude Code local machine settings (launch.json is shared; this is per-user)
+.claude/settings.local.json
+
+# Proxy runtime log lives in ~/.tokonomics (never in the repo) - belt-and-suspenders
+.tokonomics/
+proxy_log.jsonl
 
 # Python
 __pycache__/

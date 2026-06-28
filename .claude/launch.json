@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "tokonomics",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "tokonomics", "--port", "8765", "--proxy-port", "8788"],
+      "port": 8765
+    }
+  ]
+}

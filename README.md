@@ -1,14 +1,61 @@
 ﻿# Tokonomics
 
-A local web dashboard for **Claude token economics** on Windows (also macOS/Linux):
-how many sessions you ran, how much you spent, how many tokens `rtk` saved, a
-per-session **health score**, and concrete **opportunities** to save more.
+Tokonomics is two things in one local app:
 
-> Tokonomics is a **UI layer** built on top of two existing open-source tools:
+1. An **active optimization proxy** that sits between Claude Code and the
+   Anthropic API, rewrites each request through an optimization pipeline
+   (rtk-style compression + `markitdown` + prompt minify), and shows a live
+   **before/after** comparison of tokens saved.
+2. A **token-economics dashboard** for Windows (also macOS/Linux): sessions,
+   spend, tokens `rtk` saved, a per-session **health score**, and concrete
+   **opportunities** to save more.
+
+> The dashboard half is a **UI layer** built on two existing open-source tools:
 > [**rtk**](https://github.com/rtk-ai/rtk) (token-savings engine) and
 > [**ccusage**](https://github.com/ryoppippi/ccusage) (Claude usage and spend).
 > It calls them as external programs and visualizes the result. It does not copy
 > or modify their code. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+## The proxy (main component)
+
+Claude Code honors `ANTHROPIC_BASE_URL`. Point it at the local proxy and your
+traffic flows through Tokonomics' pipeline on the way to Anthropic:
+
+```
+Claude Code --(ANTHROPIC_BASE_URL=http://127.0.0.1:8788)--> Tokonomics proxy
+                  optimize request body + measure tokens          |
+                                                                  v
+                                               https://api.anthropic.com
+                  <------------- streamed response back -----------
+```
+
+No TLS interception: Claude Code talks plain HTTP to localhost; the proxy makes
+its own HTTPS call upstream and streams the SSE response straight back. Auth
+headers are forwarded untouched, so your existing login keeps working.
+
+**Pipeline stages** (each toggleable in the **Optimize** view, plus a master
+passthrough kill switch):
+
+| Stage | What it does |
+| --- | --- |
+| `rtk` | strips ANSI, dedupes, and truncates noisy command/bash `tool_result` output |
+| `markitdown` | converts PDF/Office document blocks to clean markdown |
+| `prompt` | minifies whitespace-heavy text and embedded JSON in older messages |
+
+**Safety:** optimization never raises into the live path (any failure = a
+transparent relay), the current turn and system prompt are never modified, and
+logs store **token counts only** - never message content or API keys.
+
+```sh
+pip install -e .[proxy]                              # enables markitdown + tiktoken
+python -m tokonomics                                 # dashboard :8765, proxy :8788
+setx ANTHROPIC_BASE_URL "http://127.0.0.1:8788"      # new shell, then run `claude`
+# detach later:  setx ANTHROPIC_BASE_URL ""
+```
+
+Open the **Optimize** view for the start/stop toggle, the copy-paste setup
+command, measured savings, and per-stage breakdown; **Pulse** shows a live
+request feed.
 
 ## What it shows
 
