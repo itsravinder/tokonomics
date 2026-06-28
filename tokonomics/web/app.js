@@ -385,7 +385,8 @@ function renderInsightActivity() {
 
 async function loadInsights() {
   let d;
-  try { d = await fetch("/api/insights").then(r => r.json()); } catch (e) { return; }
+  const forceMock = new URLSearchParams(location.search).get("mock") === "1";
+  try { d = await fetch("/api/insights" + (forceMock ? "?mock=1" : "")).then(r => r.json()); } catch (e) { return; }
   insightsData = d;
 
   const recs = d.recommendations || [];
@@ -423,6 +424,7 @@ function showView(view) {
   clearInterval(proxy.timer);
   if (proxyView) { loadProxy(); proxy.timer = setInterval(loadProxy, 4000); }
   if (view === "insights") loadInsights();
+  try { history.replaceState(null, "", "#" + view); } catch (e) { /* ignore */ }
 }
 
 document.querySelectorAll(".nav-item[data-view]").forEach(item => {
@@ -430,3 +432,7 @@ document.querySelectorAll(".nav-item[data-view]").forEach(item => {
 });
 
 load();
+
+// deep-link: honor #optimize / #pulse / #insights on first load
+const _initView = (location.hash || "").replace("#", "");
+if (["optimize", "pulse", "insights"].includes(_initView)) showView(_initView);

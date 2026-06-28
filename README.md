@@ -16,7 +16,33 @@ Tokonomics is two things in one local app:
 > It calls them as external programs and visualizes the result. It does not copy
 > or modify their code. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
+## Screenshots
+
+**Overview** - Claude spend, session health, and the spend-vs-savings chart.
+
+![Overview](docs/screenshots/overview.png)
+
+**Optimize** - the live proxy: original vs optimized tokens, measured savings,
+per-stage breakdown, and the optimization on/off switch.
+
+![Optimize](docs/screenshots/optimize.png)
+
+**Insights** - where your tokens go: per-project totals, most-read files,
+most-run commands, and actionable recommendations.
+
+![Insights](docs/screenshots/insights.png)
+
+**Pulse** - live, per-request feed from the proxy (token counts only).
+
+![Pulse](docs/screenshots/pulse.png)
+
 ## The proxy (main component)
+
+> **Live optimization works only through the Claude Code CLI.**
+> The Claude **desktop app** and **claude.ai in the browser** talk to Anthropic
+> directly and ignore `ANTHROPIC_BASE_URL`, so they **cannot** be routed through
+> the proxy. The economics dashboard (Overview / Insights) still reflects *all*
+> your Claude usage; only the live token compression requires the CLI.
 
 Claude Code honors `ANTHROPIC_BASE_URL`. Point it at the local proxy and your
 traffic flows through Tokonomics' pipeline on the way to Anthropic:

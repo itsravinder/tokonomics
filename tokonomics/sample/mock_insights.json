@@ -1,0 +1,37 @@
+{
+  "source": "mock",
+  "price_per_mtok": 3.0,
+  "projects": [
+    { "project": "C:/work/web-dashboard", "name": "web-dashboard", "tokens": 1102000000, "cost": 759.03 },
+    { "project": "C:/work/api-service", "name": "api-service", "tokens": 293800000, "cost": 186.68 },
+    { "project": "C:/work/token-tools", "name": "token-tools", "tokens": 116400000, "cost": 104.66 },
+    { "project": "C:/work/mobile-client", "name": "mobile-client", "tokens": 40500000, "cost": 34.04 }
+  ],
+  "files": [
+    { "key": "docs/CHECKLIST.md", "count": 316, "pct": 12.4 },
+    { "key": "tests/test_backend.py", "count": 149, "pct": 5.8 },
+    { "key": "backend/main.py", "count": 136, "pct": 5.3 },
+    { "key": "pyproject.toml", "count": 67, "pct": 2.6 },
+    { "key": "backend/pipeline.py", "count": 64, "pct": 2.5 }
+  ],
+  "commands": [
+    { "key": "cd", "count": 547, "pct": 60.1 },
+    { "key": "python", "count": 88, "pct": 9.7 },
+    { "key": "echo", "count": 70, "pct": 7.7 },
+    { "key": "sleep", "count": 40, "pct": 4.4 },
+    { "key": "git status", "count": 16, "pct": 1.8 }
+  ],
+  "tools": [
+    { "key": "Edit", "count": 1348, "pct": 29.3 },
+    { "key": "Bash", "count": 910, "pct": 19.8 },
+    { "key": "Read", "count": 480, "pct": 10.4 }
+  ],
+  "by_project": {},
+  "recommendations": [
+    { "level": "good", "title": "Optimization on - saving 2.0% so far", "detail": "Across 8 request(s) routed through the proxy." },
+    { "level": "warn", "title": "CHECKLIST.md read 316x (12.4%)", "detail": "Re-reads re-upload the whole file every turn. Keep it in context or read targeted line ranges." },
+    { "level": "info", "title": "cd is 60.1% of your commands", "detail": "Mostly navigation, not real work. Chaining commands (cd X && cmd) cuts tool calls." },
+    { "level": "info", "title": "web-dashboard is 71% of your tokens", "detail": "Most of your spend is concentrated here (about $759)." }
+  ],
+  "totals": { "projects": 4, "files_touched": 605, "tool_calls": 4725 }
+}

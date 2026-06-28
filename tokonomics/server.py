@@ -32,6 +32,7 @@ BASE_DIR = Path(__file__).resolve().parent
 WEB_DIR = BASE_DIR / "web"
 MOCK_GAIN_FILE = BASE_DIR / "sample" / "mock_gain.json"
 MOCK_ECON_FILE = BASE_DIR / "sample" / "mock_economics.json"
+MOCK_INSIGHTS_FILE = BASE_DIR / "sample" / "mock_insights.json"
 
 DEFAULT_PORT = 8765
 DEFAULT_PRICE_PER_MTOK = 3.0
@@ -152,6 +153,9 @@ class Handler(BaseHTTPRequestHandler):
             return
 
         if path == "/api/insights":
+            if force_mock:
+                self._send_json(load_json(MOCK_INSIGHTS_FILE) or {"source": "mock", "projects": [], "files": [], "commands": [], "tools": [], "recommendations": [], "totals": {}})
+                return
             try:
                 data = economics.insights(CONFIG["rtk_path"], CONFIG["price_per_mtok"])
                 ps, pst = proxy.status(), proxy.stats(CONFIG["price_per_mtok"])
